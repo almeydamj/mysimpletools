@@ -50,10 +50,10 @@
       text = text.replace(/\s{2,}/g, " ");
 
       // Step 3: Define hardcoded keywords
-      const keywords = ["milk", "nuts", "soya"]; // Add more as needed
+      const keywords = ["milk", "nuts", "soya", "soybeans", "barley", "whey"]; // Add more as needed
 
       // Step 4: Skip already tagged sections by temporarily masking them
-      const tagPattern = /<tag>(.*?)<\/tag>/gi;
+      const tagPattern = /<hl>(.*?)<\/hl>/gi;
       const tags = [];
       text = text.replace(tagPattern, (_, innerText) => {
         tags.push(innerText);
@@ -63,12 +63,12 @@
       // Step 5: Tag untagged keywords in remaining text
       keywords.forEach(word => {
         const regex = new RegExp(`\\b(${escapeRegExp(word)})\\b`, 'gi');
-        text = text.replace(regex, '<tag>$1</tag>');
+        text = text.replace(regex, '<hl>$1</hl>');
       });
 
       // Step 6: Restore original tagged content
       tags.forEach((original, i) => {
-        text = text.replace(`__TAG${i}__`, `<tag>${original}</tag>`);
+        text = text.replace(`__TAG${i}__`, `<hl>${original}</hl>`);
       });
 
       document.getElementById("outputText").value = text;
