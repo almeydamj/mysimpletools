@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tag Keywords Without Retagging</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      font-family: monospace;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    h2 {
+      margin-top: 30px;
+    }
+    tag {
+      background-color: yellow;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Allergen Tagger</h1>
+
+  <label for="inputText">Input Text:</label>
+  <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+
+  <button onclick="tagText()">Tag Words & Clean</button>
+
+  <h2>Output:</h2>
+  <textarea id="outputText" readonly></textarea>
+
+  <script>
+    function tagText() {
+      let text = document.getElementById("inputText").value;
+
+      // Step 1: Replace newlines with commas
+      text = text.replace(/\r?\n+/g, ", ");
+
+      // Step 2: Remove extra spaces
+      text = text.replace(/\s{2,}/g, " ");
+
+      // Step 3: Define hardcoded keywords
+      const keywords = ["milk", "nuts", "soya"]; // Add more as needed
+
+      // Step 4: Skip already tagged sections by temporarily masking them
+      const tagPattern = /<tag>(.*?)<\/tag>/gi;
+      const tags = [];
+      text = text.replace(tagPattern, (_, innerText) => {
+        tags.push(innerText);
+        return `__TAG${tags.length - 1}__`; // Temporary placeholder
+      });
+
+      // Step 5: Tag untagged keywords in remaining text
+      keywords.forEach(word => {
+        const regex = new RegExp(`\\b(${escapeRegExp(word)})\\b`, 'gi');
+        text = text.replace(regex, '<tag>$1</tag>');
+      });
+
+      // Step 6: Restore original tagged content
+      tags.forEach((original, i) => {
+        text = text.replace(`__TAG${i}__`, `<tag>${original}</tag>`);
+      });
+
+      document.getElementById("outputText").value = text;
+    }
+
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+  </script>
+
+</body>
+</html>
