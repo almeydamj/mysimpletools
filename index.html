@@ -35,6 +35,7 @@
   <textarea id="inputText" placeholder="Paste your text here..."></textarea>
 
   <button onclick="tagText()">Tag Words & Clean</button>
+  <button onclick="convertToProperCase()">Proper Case</button>
 
   <h2>Output:</h2>
   <textarea id="outputText" readonly></textarea>
@@ -76,6 +77,19 @@
 
     function escapeRegExp(string) {
       return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+	
+	function convertToProperCase() {
+      const input = document.getElementById('inputText');
+	  const output = document.getElementById('outputText');
+      const words = input.value.toLowerCase().split(' ');
+	  
+      for (let i = 0; i < words.length; i++) {
+        if (words[i]) {
+          words[i] = words[i][0].toUpperCase() + words[i].substring(1);
+        }
+      }
+      output.value = words.join(' ');
     }
   </script>
 
